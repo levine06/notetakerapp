@@ -19,6 +19,9 @@
 body {
     background-color: var(--bg);
     font-family: "Roboto", sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 header {
@@ -65,8 +68,9 @@ button:hover {
 
 .notes-container {
     display: flex;
-    flex-wrap: wrap;
-    padding: 32px 64px;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
 }
 
 .empty-state {
@@ -75,6 +79,7 @@ button:hover {
     gap: 16px;
     justify-content: center;
     align-items: center;
+    transform: translateY(-70px);
 }
 
 #note-dialog {
