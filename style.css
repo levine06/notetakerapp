@@ -29,6 +29,7 @@ header {
     padding: 32px;
     justify-content: space-between;
     align-items: center;
+    height: 114px;
 }
 
 .header-text {
@@ -39,11 +40,15 @@ header {
 
 button {
     cursor: pointer;
-    transition: filter 0.2s ease-in-out;
+    transition: filter 0.2s ease;
 }
 
-button:hover {
-    filter: brightness(0.9)
+.add-notes-btn:hover,
+.theme-btn:hover,
+.cancel-btn:hover,
+.save-btn:hover, 
+.close-btn:hover{
+    filter: brightness(0.9);
 }
 
 .header-buttons button, .empty-state button {
@@ -68,18 +73,17 @@ button:hover {
 
 .notes-container {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0 32px 100px 32px;
     flex: 1;
 }
 
 .empty-state {
     display: flex;
+    margin: auto;
     flex-direction: column;
     gap: 16px;
     justify-content: center;
     align-items: center;
-    transform: translateY(-70px);
 }
 
 #note-dialog {
@@ -112,11 +116,18 @@ button:hover {
     width: 30px;
     height: 30px;
     border: none;
-    font-size: 16px;
-    font-weight: 700;
     background-color: var(--surface);
     color: var(--text);
-    border-radius: 50%;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.close-btn .icon {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
 }
 
 .dialog-content{
@@ -178,5 +189,67 @@ input:focus, textarea:focus {
 
 .save-btn {
     background-color: var(--yellow-accent);
-    color: white;
+    color: var(--surface);
+}
+
+.notes-container {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.note-card {
+    background-color: var(--surface);
+    height: 400px;
+    width: 400px;
+    border-radius: 12px;
+    padding: 32px;
+}
+
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+.note-title {
+    font-size: 22px;
+    font-weight: 800;
+    
+}
+
+.note-content {
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.delete-note-btn{
+    border-radius: 8px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    font-size: 20px;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.note-card:hover .delete-note-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.delete-note-btn:hover{
+    background-color: #ff5252;
+}
+
+.delete-note-btn .icon {
+    width: 20px;
+    height: 20px;
 }

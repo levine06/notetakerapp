@@ -1,29 +1,37 @@
-const addNotesButtons = document.querySelectorAll(".add-notes-btn");
-const closeButton = document.querySelector(".close-btn");
-const cancelButton = document.querySelector(".cancel-btn");
 const dialog = document.getElementById("note-dialog");
 const dialogForm = document.getElementById("dialog-form");
-let notes = [];
+const notesContainer = document.querySelector(".notes-container");
+let notes = loadNotes() || [];
+renderNotes();
 
-addNotesButtons.forEach((button) => {
-    button.addEventListener("click", () => {
+document.addEventListener("click", (e) => {
+    if (e.target.closest(".add-notes-btn")) {
         dialog.showModal();
-    });
+        return;
+    }
+
+    if (e.target.closest(".close-btn")) {
+        dialog.close();
+        return;
+    }
+
+    if (e.target.closest(".cancel-btn")) {
+        dialog.close();
+        dialogForm.reset();
+        return;
+    }
+
+    const deleteBtn = e.target.closest(".delete-note-btn");
+    if (deleteBtn) {
+        deleteNote(deleteBtn.dataset.id);
+        return;
+    }
 });
 
 dialog.addEventListener("click", (e) => {
     if (e.target === dialog) {
         dialog.close();
     }
-});
-
-closeButton.addEventListener("click", () => {
-    dialog.close();
-});
-
-cancelButton.addEventListener("click", () => {
-    dialog.close();
-    dialogForm.reset();
 });
 
 dialogForm.addEventListener("submit", saveNote);
@@ -41,6 +49,7 @@ function saveNote(e) {
     });
 
     saveNotes();
+    renderNotes();
     dialog.close();
     dialogForm.reset();
 }
@@ -51,4 +60,49 @@ function generateId() {
 
 function saveNotes() {
     localStorage.setItem('notes', JSON.stringify(notes));
+}
+
+function loadNotes() {
+    return JSON.parse(localStorage.getItem('notes'));
+}
+
+function renderNotes() {
+    notesContainer.innerHTML = "";
+
+    if (notes.length === 0) {
+        notesContainer.innerHTML = `
+        <div class="empty-state">
+            <h2>No notes yet</h2>
+            <p>Create your first note to get started!</p>
+            <button class="add-notes-btn">+ Add Note</button>
+        </div>
+        `;
+        return;
+    }
+
+    notes.forEach((note) => {
+        notesContainer.innerHTML += `
+        <div class="note-card">
+            <div class="note-header">
+                <h3 class="note-title">${note.title}</h3>
+                <button class="delete-note-btn" type="button" data-id="${note.id}">
+                    <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M4 7h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+                        <path d="M10 11v6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+                        <path d="M14 11v6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/>
+                        <path d="M6 7l1 14h10l1-14" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"/>
+                        <path d="M9 7V4h6v3" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="note-content">${note.content}</p>
+        </div>
+        `
+    });
+}
+
+function deleteNote(id) {
+    notes = notes.filter(note => note.id !== id);
+    saveNotes();
+    renderNotes();
 }
