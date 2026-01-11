@@ -3,27 +3,37 @@ const dialogForm = document.getElementById("dialog-form");
 const notesContainer = document.querySelector(".notes-container");
 applyStoredTheme();
 let notes = loadNotes() || [];
+let editingId = null;
 renderNotes();
 
 document.addEventListener("click", (e) => {
     if (e.target.closest(".add-notes-btn")) {
+        resetDialog();
         dialog.showModal();
         return;
     }
 
-    if (e.target.closest(".close-btn")) {
+    if (e.target.closest(".close-btn") || e.target.closest(".cancel-btn")) {
         dialog.close();
-        return;
-    }
-
-    if (e.target.closest(".cancel-btn")) {
-        dialog.close();
-        dialogForm.reset();
+        resetDialog();
         return;
     }
 
     if (e.target.closest(".theme-btn")) {
         toggleTheme();
+        return;
+    }
+
+    const editBtn = e.target.closest(".edit-note-btn");
+    if (editBtn) {
+        const id = editBtn.dataset.id;
+        const note = notes.find(n => n.id === id);
+        if (!note) return;
+        editingId = id;
+        document.getElementById("note-title").value = note.title;
+        document.getElementById("note-content").value = note.content;
+        document.querySelector(".dialog-title").textContent = "Edit Note";
+        dialog.showModal();
         return;
     }
 
@@ -37,8 +47,15 @@ document.addEventListener("click", (e) => {
 dialog.addEventListener("click", (e) => {
     if (e.target === dialog) {
         dialog.close();
+        resetDialog();
     }
 });
+
+function resetDialog() {
+    dialogForm.reset();
+    editingId = null;
+    document.querySelector(".dialog-title").textContent = "Add New Note";
+}
 
 dialogForm.addEventListener("submit", saveNote);
 
@@ -47,17 +64,28 @@ function saveNote(e) {
 
     const title = document.getElementById("note-title").value.trim();
     const content = document.getElementById("note-content").value.trim();
-    
-    notes.unshift({
+
+    if (!title || !content) return;
+
+    if (editingId) {
+        const index = notes.findIndex(n => n.id === editingId);
+        if (index !== -1) {
+            notes[index].title = title;
+            notes[index].content = content;
+        }
+    }
+    else {
+        notes.unshift({
         id: generateId(),
         title: title,
         content: content,
     });
+    }
 
     saveNotes();
     renderNotes();
     dialog.close();
-    dialogForm.reset();
+    resetDialog();
 }
 
 function generateId() {
